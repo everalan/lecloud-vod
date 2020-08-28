@@ -1,6 +1,6 @@
 {
     "name": "everalan/lecloud-vod",
-    "description": "乐视点播获取播放地址",
+    "description": "乐视标准点播获取视频地址",
     "type": "library",
     "require": {
         "php": ">=7.0"
