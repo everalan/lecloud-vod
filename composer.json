@@ -1,0 +1,27 @@
+{
+    "name": "everalan/lecloud-vod",
+    "description": "乐视点播获取播放地址",
+    "type": "library",
+    "require": {
+        "php": ">=7.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alan",
+            "email": "everalan@everalan.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Everalan\\VOD\\VODServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Everalan\\VOD\\": "src/"
+        }
+    }
+}
