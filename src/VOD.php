@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\Http;
 class VOD
 {
     protected $uu;
+    protected $UUID;
     public function __construct($uu)
     {
         $this->uu = $uu;
+        $this->UUID = Str::random(32);
     }
 
     /**
@@ -29,7 +31,7 @@ class VOD
             'pic' => $info['videoinfo']['pic'],
             'title' => urldecode($info['videoinfo']['title']),
             'duration' => $info['videoinfo']['duration'],
-            'url' => $info['videoinfo']['medialist'][$media_index]['urllist'][0]['url'],
+            'url' => $this->getM3U8Url($info['videoinfo']['medialist'][$media_index]['urllist'][0]['url'], $info['videoinfo']['vid']),
             'width' => $info['videoinfo']['medialist'][$media_index]['vwidth'],
             'height' => $info['videoinfo']['medialist'][$media_index]['vheight'],
         ];
@@ -42,14 +44,14 @@ class VOD
      * @return mixed
      * @throws VODException
      */
-    public function getVideoInfo($vu)
+    protected function getVideoInfo($vu)
     {
         $params = [
             'cf' =>"html5",
             'ran' => time(),
             'pver' => "H5_Vod_20200610_4.5.20",
             'bver' => "chrome84.0.4147.135",
-            'uuid' => Str::random(32),
+            'uuid' => $this->UUID,
             'pf' => "html5",
             'spf' => 0,
             'uu' => "dfa091e731",
@@ -65,15 +67,14 @@ class VOD
         if($ret['code'] !== 0) {
             throw new VODException($ret['message'] ?: '获取视频信息失败');
         }
-        $info = $ret['data'];
-        foreach($info['videoinfo']['medialist'] as $i => $inf) {
-            foreach($inf['urllist'] as $j => $urlinfo) {
-                $info['videoinfo']['medialist'][$i]['urllist'][$j]['url'] = base64_decode($urlinfo['url']);
-            }
-        }
-        return $info;
+        return $ret['data'];
     }
 
+    protected function getM3U8Url($url, $vid)
+    {
+        $url = base64_decode($url) . '&uuid=6E64C0CD7A92ECC97BD32EF5B76EE0B0_0&vid=49764464&ajax=1&_r=json&format=1&expect=3';
+        return Http::get($url)->json()['location'];
+    }
     protected function sign($strs)
     {
         return md5(join("", $strs) . "fbeh5player12c43eccf2bec3300344");
